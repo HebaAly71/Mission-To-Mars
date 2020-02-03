@@ -21,10 +21,6 @@ def mars_news(browser):
     except AttributeError:
         return None, None
     return news_title, news_p
-# %% 'Markdown'
-"### Featured Images"
-
-
 # %%
 # Image URL Function
 def featured_image(browser):
@@ -34,7 +30,7 @@ def featured_image(browser):
     full_image_elem = browser.find_by_id('full_image')
     full_image_elem.click()
     browser.is_element_present_by_text('more info', wait_time=1)
-    more_info_elem = browser.links.find_by_partial_text('more info')
+    more_info_elem = browser.find_link_by_partial_text('more info')
     more_info_elem.click()
     html = browser.html
     img_soup = BeautifulSoup(html, 'html.parser')
@@ -62,6 +58,28 @@ def mars_facts():
 
 # %%
 # Challenge
+#def hemispheres(browser):
+
+# %%
+browser = Browser('chrome', executable_path='/usr/local/bin/chromedriver', headless=False)
+# %%
+url = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
+browser.visit(url)
+# %%
+# parsing
+html = browser.html
+#news_soup = BeautifulSoup(html, 'html.parser')
+# %%
+reqs = requests.get(url)
+soup = BeautifulSoup(reqs.text, 'lxml')
+# %%
+x = range(3)
+title_dict=[]
+for heading in soup.find_all(["h3"]):
+    heading1 = heading.text.strip()
+    title_dict.append(heading1)
+
+# %%
 def hemispheres(browser):
     # A way to break up long strings
     url = (
@@ -82,13 +100,12 @@ def hemispheres(browser):
     return hemisphere_image_urls
 # %%
 def scrape_hemisphere(html_text):
-    #url = (
-        #"https://astrogeology.usgs.gov/search/"
-        #"results?q=hemisphere+enhanced&k1=target&v1=Mars")
+    #url = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
+    #browser.visit(url)
     # parse html text
-    #reqs= requests.get(url)
-    #soup= BeautifulSoup(reqs.text, 'lxml')
-    hemi_soup= BeautifulSoup(html_text, "html.parser")
+    #reqs = requests.get(url)
+    #soup = BeautifulSoup(reqs.text, 'lxml')
+    hemi_soup = BeautifulSoup(html_text, "html.parser")
     # adding try/except for error handling
     try:
         title_elem = hemi_soup.find("h2", class_="title").get_text()
@@ -102,7 +119,14 @@ def scrape_hemisphere(html_text):
         "img_url": sample_elem
     }
     return hemispheres
-
+# %%
+slide_elem = news_soup.select_one('div.result-list')
+print(slide_elem)
+# %%
+hem_title = slide_elem.find("div", class_='description')
+# %%
+hem_title_1 = hem_title.find('a', )
+print(hem_title_1)
 # %%
 def scrape_all():
    # Initiate headless driver for deployment
@@ -115,10 +139,7 @@ def scrape_all():
       "news_paragraph": news_paragraph,
       "featured_image": featured_image(browser),
       "facts": mars_facts(),
-      "last_modified": dt.datetime.now(),
-      "hemispheres_image_url": hemispheres(browser),
-      "hemispheres": scrape_hemisphere(browser.html)
-        
+      "last_modified": dt.datetime.now()
     }
     #if __name__ == "__main__":
     return data
@@ -128,5 +149,31 @@ def scrape_all():
     
 
 # %%
+#browser.quit() 
+
+# %%
+# A way to break up long strings
+browser = Browser('chrome', executable_path='/usr/local/bin/chromedriver', headless=False)
+url = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
+browser.visit(url)
+    # Click the link, find the sample anchor, return the href
+hemisphere_image_urls = []
+for i in range(4):
+    # Find the elements on each loop to avoid a stale element exception
+    browser.find_by_css("a.product-item h3")[i].click()
+    hemi_data = scrape_hemisphere(browser.html)
+    # Append hemisphere object to list
+    hemisphere_image_urls.append(hemi_data)
+    # Finally, we navigate backwards
+    browser.back()
+    hemisphere_image_urls2 = pd.DataFrame(hemisphere_image_urls)
+print(hemisphere_image_urls2)
+    # return hemisphere_image_urls
+
+# %%
+print(hemi_data)
+# %%
+listofTuples = [("Riti" , 11), ("Aadi" , 12), ("Sam" , 13),("John" , 22),("Lucy" , 90)]
+studentsDict = dict(listofTuples)
 
 # %%

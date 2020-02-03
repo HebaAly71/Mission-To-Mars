@@ -27,7 +27,22 @@
                 </div>
             </div>
         </div>
-    
+     <!-- Section for Mars Hemispheres -->
+     <div class="row" id="mars-hemispheres">
+        <div class="page-header">
+          <h2 class="text-center">Mars Hemispheres</h2>
+        </div>
+        {% for hemisphere in mars.hemispheres_image_url %}
+        <div class="col-md-3">
+          <div class="thumbnail">
+            <img src="{{hemisphere.img_url}}" alt="error">
+            <div class="caption">
+                <h3>{{hemisphere.title}}</h3>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
      <!-- Mars Featured Image -->
         <div class="row" id="mars-featured-image">
             <div class="col-md-8">
